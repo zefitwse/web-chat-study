@@ -1,57 +1,153 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button, Input } from "antd";
-import MessageRenderCom from "./components/MessageRenderCom";
-import CodeEditor from "./components/CodeEditorCom";
-import TypeWriteFlowCom from "./components/TypeWriteFlowCom";
+import { Button, Input, Form } from "antd";
+import { ArrowUpOutlined, StopOutlined } from "@ant-design/icons";
+import QAChatCom from "./QAChatCom/index";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  insertQAMessageToStore,
+  appendAnswerToStore,
+} from "../../stores/messageSlice";
 import { sendQuestion } from "../../fetchApi/request";
+import {
+  QAInsertDB,
+  AnswerContinueInsertDB,
+  AnswerInsertFinish,
+} from "../../utils/index";
 import "./index.less";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+
+const { TextArea } = Input;
+
 const ChatAreaCom = () => {
-  const [answerText, setAnswerText] = useState(""); // 接收到的回答
+  const [form] = Form.useForm();
 
-  // const controllerRef = useRef<AbortController | any>(null);
-  // controllerRef.current = new AbortController(); // 保存 AbortController 实例
+  // const [answerText, setAnswerText] = useState({}); // 接收到的回答
+  const sending = useRef(false); // 按钮发送loading
 
-  const getAnswer = async () => {
+  const controllerRef = useRef<AbortController | any>(null);
+
+  // 用store来维护UI层的聊天记录
+  const dispatch = useDispatch();
+  const messageArr = useSelector((state: any) => state.message.messageArr);
+
+  const send = async () => {
+    sending.current = true;
+    // 获取用户的输入值
+    const value = form.getFieldValue("userPrompt");
+    // 创建终止signal
+    controllerRef.current = new AbortController();
+
+    let userQuestionObj = {
+      id: Date.now(),
+      role: "user",
+      input: value,
+      createdAt: Date.now(),
+    };
+    // 入库。用indexDB来维护持久层的聊天记录
+    await QAInsertDB(userQuestionObj, "user");
+
+    // 入store
+    dispatch(insertQAMessageToStore(userQuestionObj));
+
     try {
-      const res: any = await sendQuestion("aaa");// 调用封装的 fetch 接口
+      const res: any = await sendQuestion(value); // 调用封装的 fetch 接口
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      let tempId = Date.now();
+      let tempText = "";
+      let answerMessageObj = {
+        id: tempId,
+        role: "assistant",
+        type: "textual",
+        sql: "",
+        result: null,
+        partialText: "", //  增加这个字段做流式显示
+        streaming: true, //  表示它还没完成
+        createdAt: tempId,
+      };
+
+      await QAInsertDB(value, "GPT", answerMessageObj);
+      dispatch(insertQAMessageToStore(answerMessageObj));
 
       while (true) {
         const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = JSON.parse(decoder.decode(value)).data
-        setAnswerText(chunk); // 或者累加展示
-        // console.log(chunk,'wohsi chunk')
+
+        // 如果流结束了，则标记输出完毕
+        if (done) {
+          // 讲之后的流式输出，追加put到库里
+          AnswerInsertFinish(answerMessageObj, tempText);
+          // store做对应的处理
+          dispatch(
+            appendAnswerToStore({
+              id: tempId,
+              tempText,
+              end: true,
+            })
+          );
+          break;
+        }
+        const chunk = JSON.parse(decoder.decode(value)).data;
+        // ai的回答可能会过长，这时候会用流式分chunk输出给前端。这里是把之后的流式输出，追加put到库里
+        await AnswerContinueInsertDB(answerMessageObj, tempText, chunk);
+        dispatch(
+          appendAnswerToStore({
+            id: tempId,
+            tempText,
+            end: false,
+            chunk,
+          })
+        );
+        tempText = tempText + chunk;
       }
     } catch (err) {
       console.error("获取答案失败:", err);
+    } finally {
+      sending.current = false;
     }
   };
 
   useEffect(() => { }, []);
 
   return (
-    <div className="chat-content">
+    <div className="chat-container">
       <div className="output-area">
-        <TypeWriteFlowCom text={answerText}></TypeWriteFlowCom>
-        <MessageRenderCom></MessageRenderCom>
-        <CodeEditor></CodeEditor>
+        <div className="answer-container">
+          <QAChatCom messageArr={messageArr}></QAChatCom>
+        </div>
       </div>
 
+      {/* 用户输入区域 */}
       <div className="input-area">
-        <Input></Input>
-        <Button onClick={getAnswer}>发送</Button>
-        <Button
-          onClick={() => {
-            // if (controllerRef.current) {
-            //   controllerRef.current.abort(); // AbortController 实例有 abort 方法
-            // }
-          }}
-        >
-          终止
-        </Button>
+        <Form form={form}>
+          <Form.Item label="" name="userPrompt">
+            <TextArea
+              placeholder="请输入"
+              allowClear
+              autoSize={{ minRows: 2, maxRows: 6 }}
+              className="self-textarea"
+            />
+          </Form.Item>
+        </Form>
+
+        <div className="self-button">
+          {sending.current ? (
+            <Button
+              shape="circle"
+              icon={<StopOutlined />}
+              onClick={() => {
+                if (controllerRef.current) {
+                  controllerRef.current.abort(); // AbortController 实例有 abort 方法
+                }
+              }}
+            ></Button>
+          ) : (
+            <Button
+              shape="circle"
+              icon={<ArrowUpOutlined />}
+              onClick={send}
+            ></Button>
+          )}
+        </div>
       </div>
       <Outlet />
     </div>

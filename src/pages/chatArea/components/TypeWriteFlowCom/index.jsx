@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
+import './index.less'
 
-const TypeWriteFlowCom = ({ text }) => {
+const TypeWriteFlowCom = ({ chunkText }) => {
   const [textContent, setTextContent] = useState("");
 
   const fullText = useRef("");
@@ -8,8 +9,8 @@ const TypeWriteFlowCom = ({ text }) => {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    if (text) {
-      fullText.current += text;
+    if (chunkText) {
+      fullText.current += chunkText;
     }
 
     timerRef.current = setInterval(() => {
@@ -26,9 +27,9 @@ const TypeWriteFlowCom = ({ text }) => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [text]);
+  }, [chunkText]);
 
-  return <div>{textContent}</div>;
+  return <div className="answer-message">{textContent}</div>;
 };
 
 export default TypeWriteFlowCom;
