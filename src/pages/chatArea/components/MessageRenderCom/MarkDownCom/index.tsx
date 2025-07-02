@@ -8,7 +8,7 @@ import './index.less' // 👈 引入样式
 const markdown = `
 # 📝 Markdown 示例
 
-这是普通文字，**加粗**，_斜体_，~~删除线~~，<u>下划线</u>。
+这是普通文字，**加粗**，<i>斜体State</i>，~~删除线~~，<u>下划线</u>，<mark>文本高亮</mark>，文本^上标^，文本~下标~，<small>小号字体</small>，<big>大号字体</big>，<sub>下标</sub>，<sup>上标</sup>，<q>引文</q>。
 
 ---
 

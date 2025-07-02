@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import type { MenuProps } from "antd";
 import { Menu, Button } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 type MenuItem = Required<MenuProps>["items"][number];
 
 const items: MenuItem[] = [
@@ -28,7 +28,9 @@ const SideBar = () => {
     setCollapsed(!collapsed);
   };
 
-  const onClick: MenuProps["onClick"] = (e) => {};
+  const onClick: MenuProps["onClick"] = (e) => {
+    console.log("click ", e);
+  };
 
   useEffect(() => {
     const res = [
@@ -50,11 +52,11 @@ const SideBar = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ width: 256 }}>
       <Button
         type="primary"
         onClick={toggleCollapsed}
-        style={{ marginBottom: 16 }}
+        style={{ marginBottom: 10 }}
       >
         {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
       </Button>
@@ -62,11 +64,17 @@ const SideBar = () => {
       <div className="chat-list">
         <Menu
           onClick={onClick}
-          style={{ width: 256 }}
           defaultSelectedKeys={["1"]}
           defaultOpenKeys={["sub1"]}
           mode="inline"
-          items={menuList}
+          inlineCollapsed={collapsed}
+          items={menuList.map((item: any) => {
+            return {
+              key: item.key,
+              label: <NavLink to={item.key}>{item.label}</NavLink>,
+              type: item.type,
+            };
+          })}
         />
       </div>
     </div>

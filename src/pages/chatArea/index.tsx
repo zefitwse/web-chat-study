@@ -5,7 +5,7 @@ import CodeEditor from "./components/CodeEditorCom";
 import TypeWriteFlowCom from "./components/TypeWriteFlowCom";
 import { sendQuestion } from "../../fetchApi/request";
 import "./index.less";
-
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 const ChatAreaCom = () => {
   const [answerText, setAnswerText] = useState(""); // 接收到的回答
 
@@ -14,7 +14,7 @@ const ChatAreaCom = () => {
 
   const getAnswer = async () => {
     try {
-      const res:any = await sendQuestion("aaa");// 调用封装的 fetch 接口
+      const res: any = await sendQuestion("aaa");// 调用封装的 fetch 接口
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
 
@@ -30,7 +30,7 @@ const ChatAreaCom = () => {
     }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   return (
     <div className="chat-content">
@@ -53,6 +53,7 @@ const ChatAreaCom = () => {
           终止
         </Button>
       </div>
+      <Outlet />
     </div>
   );
 };
