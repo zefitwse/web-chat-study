@@ -1,15 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ChatAreaCom from "./pages/chatArea";
 import SideBar from "./pages/sideBar";
 import TopBar from "./pages/topBar";
 
+
+
+import { useDispatch } from "react-redux";
+import { changeTheme } from "./stores/themeSlice.ts";
+
 import "./App.less";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    dispatch(changeTheme(isDark))
+  },[])
+
   return (
     <>
       <div className="app-container">
-        <header className="header">
+        <header className="app-header">
           <TopBar></TopBar>
         </header>
         <section className="section">

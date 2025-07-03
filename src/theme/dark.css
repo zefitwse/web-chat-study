@@ -2,9 +2,22 @@ html.theme-dark {
     --color-bg: #121212;
     --color-bg-1: #403f3f;
     --color-text: #f1f1f1;
+    --color-text-1: #e9e6e6;
     --color-primary: #3399ff;
     --gradient-color-1: #2c3e50;
     --gradient-color-2: #34495e;
     --gradient-color-3: #5c6bc0;
     --gradient-color-4: #8e44ad;
+    --color-footer: #252525;
   }
+
+
+  /* Light 模式 */
+html.theme-dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Dark 模式 */
+html.theme-dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+}

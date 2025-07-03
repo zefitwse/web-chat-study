@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Button, Input, Form } from "antd";
 import { ArrowUpOutlined, StopOutlined } from "@ant-design/icons";
 import QAChatCom from "./QAChatCom/index";
@@ -6,13 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   insertQAMessageToStore,
   appendAnswerToStore,
+  initMessageArr,
 } from "../../stores/messageSlice";
 import { sendQuestion } from "../../fetchApi/request";
 import {
   QAInsertDB,
   AnswerContinueInsertDB,
   AnswerInsertFinish,
-} from "../../utils/index";
+  getAllMessages,
+} from "../../utils";
 import "./index.less";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
@@ -25,6 +27,7 @@ const ChatAreaCom = () => {
   const sending = useRef(false); // 按钮发送loading
 
   const controllerRef = useRef<AbortController | any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // 用store来维护UI层的聊天记录
   const dispatch = useDispatch();
@@ -106,20 +109,37 @@ const ChatAreaCom = () => {
     }
   };
 
-  useEffect(() => { }, []);
+  const initMessage = async () => {
+    let res = await getAllMessages("message");
+    dispatch(initMessageArr(res));
+  };
+
+
+useEffect(() => {
+
+  const el = containerRef.current;
+  if (el) {
+    console.log('gundong')
+    el.scrollTop = el.scrollHeight;
+  }
+}, [messageArr.length]);
+
+  useEffect(() => {
+    initMessage();
+  }, []);
 
   return (
     <div className="chat-container">
-      <div className="output-area">
-        <div className="answer-container">
-          <QAChatCom messageArr={messageArr}></QAChatCom>
+      <div ref={containerRef} className="output-area">
+        <div  className="answer-container">
+          <QAChatCom  messageArr={messageArr}></QAChatCom>
         </div>
       </div>
 
       {/* 用户输入区域 */}
       <div className="input-area">
         <Form form={form}>
-          <Form.Item label="" name="userPrompt">
+          <Form.Item style={{marginBottom:0}} label="" name="userPrompt">
             <TextArea
               placeholder="请输入"
               allowClear
@@ -127,9 +147,7 @@ const ChatAreaCom = () => {
               className="self-textarea"
             />
           </Form.Item>
-        </Form>
-
-        <div className="self-button">
+          <div className="self-button">
           {sending.current ? (
             <Button
               shape="circle"
@@ -148,6 +166,9 @@ const ChatAreaCom = () => {
             ></Button>
           )}
         </div>
+        </Form>
+
+
       </div>
       <Outlet />
     </div>

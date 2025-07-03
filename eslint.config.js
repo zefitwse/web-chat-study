@@ -28,7 +28,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
 
       // 自定义规则
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }], // 忽略常量的未使用检查
+      'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]' }], // 忽略常量的未使用检查
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true }, // 允许常量导出

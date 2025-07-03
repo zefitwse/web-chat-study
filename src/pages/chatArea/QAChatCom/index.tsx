@@ -1,19 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import TypeWriteFlowCom from "../components/TypeWriteFlowCom";
-import MarkDownCom from "../components/MarkDownCom";
-import CodeEditor from "../components/CodeEditorCom";
 import UserChatBubbleCom from "../components/UserChatBubbleCom";
+import './index.less'
 
 const QAChatCom = (props: any) => {
-  const [chatRecord, setChatRecord] = useState([]);
-  console.log(props.messageArr, "messageArr");
   return (
     <>
       {props.messageArr.map((item: any) => {
         if (item.role === "user") {
           return  <UserChatBubbleCom messageItem={item} key={item.id}></UserChatBubbleCom>;
-        }else{
+        }else if(item.streaming){
           return <TypeWriteFlowCom chunkText={item.partialText} key={item.id}></TypeWriteFlowCom>
+        } else{
+          return <div key={item.id} className="answer-message">{item.result}</div>;
         }
       })}
     </>

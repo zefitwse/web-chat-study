@@ -2,10 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const messageSlice = createSlice({
   name: "message",
-  initialState: { messageArr: [] as any },
+  initialState: { messageArr: [] as any, theme: "light" },
   reducers: {
     insertQAMessageToStore: (state, action) => {
       state.messageArr.push(action.payload);
+    },
+    initMessageArr: (state, action) => {
+      state.messageArr = action.payload;
     },
     appendAnswerToStore: (state, action) => {
       const index = state.messageArr.findIndex((item: any) => {
@@ -33,7 +36,7 @@ const messageSlice = createSlice({
   },
 });
 
-export const { insertQAMessageToStore, appendAnswerToStore } =
+export const { insertQAMessageToStore, appendAnswerToStore, initMessageArr } =
   messageSlice.actions;
 
 export default messageSlice.reducer;

@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { Avatar, Button } from "antd";
+import { useSelector, useDispatch } from "react-redux";
+import { changeTheme } from "../../stores/themeSlice.ts";
 
 import "./index.less";
 
 const TopBar = () => {
-  const [themeLight, setThemeLight] = useState(false);
+  const isDark = useSelector((state) => state.theme.isDark);
+  const dispatch = useDispatch();
 
   const changeThemeMode = () => {
-    setThemeLight(!themeLight);
-    document.documentElement.classList.toggle("theme-dark");
+    dispatch(changeTheme(!isDark));
+    
   };
 
   return (
@@ -22,7 +25,7 @@ const TopBar = () => {
             shape="round"
             onClick={changeThemeMode}
           >
-            {!themeLight ? "切换夜间" : "切换白天"}
+            {!isDark ? "切换夜间" : "切换白天"}
           </Button>
           <Avatar className="avator"></Avatar>
         </div>

@@ -57,3 +57,14 @@ export const AnswerInsertFinish = async (pre: any, tempText: any) => {
     console.log(error, "结束追加时候，入库错误");
   }
 };
+
+// 获取table的所有信息
+export const getAllMessages = async (tableName: any) => {
+  try {
+    let res = await db.getAll("messages");
+    return res;
+  } catch (error) {
+    console.log(error, "出库错误");
+    return [];
+  }
+};
