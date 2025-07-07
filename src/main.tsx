@@ -12,15 +12,13 @@ import "./theme/dark.css";
 import "./theme/index.css";
 
 // ✅ 封装一个组件来使用 useSelector
-const RootApp = () => {
-  const isDark = useSelector((state) => state.theme.isDark);
+const RootApp: React.FC = () => {
+  const isDark = useSelector((state: any) => state.theme.isDark);
 
   return (
     <ConfigProvider
       theme={{
-        algorithm: isDark
-          ? theme.darkAlgorithm
-          : theme.defaultAlgorithm,
+        algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
         token: {
           colorPrimary: "#1677ff",
         },
@@ -31,7 +29,9 @@ const RootApp = () => {
   );
 };
 
-createRoot(document.getElementById("root")).render(
+const container = document.getElementById("root") as HTMLElement;
+const root = createRoot(container);
+root.render(
   <Provider store={store}>
     <BrowserRouter>
       <StrictMode>

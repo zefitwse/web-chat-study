@@ -1,10 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const themeSlice = createSlice({
   name: "theme",
   initialState: { isDark: false },
   reducers: {
-    changeTheme: (state, action: any) => {
+    changeTheme: (state, action: PayloadAction<boolean>): void => {
       state.isDark = action.payload;
       if (state.isDark) {
         document.documentElement.classList.add("theme-dark");
@@ -13,7 +13,6 @@ const themeSlice = createSlice({
         document.documentElement.classList.add("theme-light");
         document.documentElement.classList.remove("theme-dark");
       }
-      
     },
   },
 });

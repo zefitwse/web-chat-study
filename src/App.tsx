@@ -3,20 +3,19 @@ import ChatAreaCom from "./pages/chatArea";
 import SideBar from "./pages/sideBar";
 import TopBar from "./pages/topBar";
 
-
-
 import { useDispatch } from "react-redux";
-import { changeTheme } from "./stores/themeSlice.ts";
+import { changeTheme } from "./stores/themeSlice";
 
 import "./App.less";
 
-function App() {
+const App: React.FC = () => {
   const dispatch = useDispatch();
 
-  useEffect(()=>{
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    dispatch(changeTheme(isDark))
-  },[])
+  useEffect(() => {
+    const isDark: any =
+      window.matchMedia("(prefers-color-scheme: dark)").matches || false;
+    dispatch(changeTheme(isDark));
+  }, []);
 
   return (
     <>
@@ -36,6 +35,6 @@ function App() {
       </div>
     </>
   );
-}
+};
 
 export default App;
