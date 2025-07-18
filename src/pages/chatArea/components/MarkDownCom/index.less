@@ -1,17 +1,98 @@
-.markdown-table{
-    table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-      
-      th, td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: center;
-      }
-      
-      th {
-        background-color: #f5f5f5;
-      }
-      
+.self-markdown-table {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--color-bg); /* table 自己的背景 */
+    color: var(--color-text); /* 字体颜色，可能会继承 */
+  }
+
+  th,
+  td {
+    border: 1px solid var(--color-text);
+    padding: 8px 12px;
+    background-color: var(--color-bg); /* 👈 显式设置背景 */
+    color: var(--color-text); /* 👈 显式设置字体颜色 */
+  }
+
+  thead th {
+    background-color: var(--color-bg); /* 👈 头部行单独颜色 */
+  }
+
+  tr:nth-child(even) {
+    background-color: var(--gradient-color-2); /* 可选：斑马纹 */
+  }
+
+  pre {
+    background-color: var(--color-bg); /* 浅灰色背景 */
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    color: var(--color-text);
+  }
+
+  code {
+    font-family: monospace;
+    font-size: 16px;
+  }
+  /* 代码块整体容器样式 */
+  .hljs {
+    background-color: var(--color-bg);
+    color: #abb2bf; /* 默认字体颜色 */
+    border-radius: 8px; /* 圆角边框 */
+    padding: 12px; /* 内边距 */
+    overflow-x: auto; /* 横向滚动支持 */
+    font-family: "Fira Code", monospace; /* 等宽字体 */
+  }
+
+  /* 注释和引用，比如 //、#、""" 等 */
+  .hljs-comment,
+  .hljs-quote {
+    color: #91a4c7; /* 灰色，弱化处理 */
+    font-style: italic; /* 斜体 */
+  }
+
+  /* 关键字，如 if、else、return、class 等 */
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-subst {
+    color: #c678dd; /* 紫色 */
+    font-weight: 600; /* 加粗 */
+  }
+
+  /* 字符串，例如 "hello"、'world' */
+  .hljs-string,
+  .hljs-title,
+  .hljs-section,
+  .hljs-attribute {
+    color: #98c379; /* 绿色 */
+  }
+
+  /* 数字常量、布尔值、null、undefined 等 */
+  .hljs-number,
+  .hljs-symbol,
+  .hljs-literal {
+    color: #d19a66; /* 橙色 */
+  }
+
+  /* 文档标签、类型关键字，比如 @param、int、float 等 */
+  .hljs-doctag,
+  .hljs-type {
+    color: #c678dd;
+  }
+
+  /* HTML/JSX 标签名、类名、id选择器 */
+  .hljs-name,
+  .hljs-selector-id,
+  .hljs-selector-class {
+    color: #e06c75; /* 红色 */
+  }
+
+  /* 强调：斜体和加粗 */
+  .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .hljs-strong {
+    font-weight: bold;
+  }
 }

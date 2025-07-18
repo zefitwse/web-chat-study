@@ -19,17 +19,17 @@ const messageSlice = createSlice({
 
       const message = state.messageArr[index];
 
-      if (!action.payload.end) {
-        state.messageArr[index] = {
-          ...message,
-          partialText: action.payload.chunk,
-        };
-      } else {
+      if (action.payload.end) {
         state.messageArr[index] = {
           ...message,
           result: action.payload.tempText,
           partialText: action.payload.chunk,
           streaming: false,
+        };
+      } else {
+        state.messageArr[index] = {
+          ...message,
+          partialText: action.payload.chunk,
         };
       }
     },

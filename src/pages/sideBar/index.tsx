@@ -20,50 +20,6 @@ const items: MenuItem[] = [
     type: "divider",
   },
   {
-    key: "111231",
-    label: "查询今天提前",
-  },
-  {
-    key: "22123432342",
-    label: "查询今天提前",
-  },
-  {
-    key: "267867822226786782",
-    label: "查询今天提前",
-  },
-  {
-    key: "26786786999786782",
-    label: "查询今天提前",
-  },
-  {
-    key: "267867867862",
-    label: "查询今天提前",
-  },
-  {
-    key: "26786784642",
-    label: "查询今天提前",
-  },
-  {
-    key: "222",
-    label: "查询今天提前",
-  },
-  {
-    key: "22342",
-    label: "查询今天提前",
-  },
-  {
-    key: "25672",
-    label: "查询今天提前",
-  },
-  {
-    key: "2567562",
-    label: "查询今天提前",
-  },
-  {
-    key: "26786782",
-    label: "查询今天提前",
-  },
-  {
     key: "326786786782",
     label: "查询今天提前",
   },
@@ -80,7 +36,6 @@ const items: MenuItem[] = [
 const SideBar = () => {
   const [menuList, setMemuList] = useState(items);
   const onClick: MenuProps["onClick"] = (e) => {
-    console.log("click ", e);
   };
 
   useEffect(() => {

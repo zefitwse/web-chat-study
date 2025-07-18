@@ -10,7 +10,7 @@ const TypeWriteFlowCom = ({ chunkText }) => {
 
   useEffect(() => {
     if (chunkText) {
-      fullText.current += chunkText;
+      fullText.current = chunkText;
     }
 
     timerRef.current = setInterval(() => {
@@ -22,14 +22,14 @@ const TypeWriteFlowCom = ({ chunkText }) => {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
-    }, 50);
+    }, 20);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [chunkText]);
 
-  return <div className="answer-message">{textContent}</div>;
+  return (<><div className="answer-message">{textContent}</div></>);
 };
 
 export default TypeWriteFlowCom;

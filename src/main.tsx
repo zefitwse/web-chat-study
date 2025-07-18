@@ -7,6 +7,8 @@ import { ConfigProvider, theme } from "antd";
 
 import App from "./App.jsx";
 
+import './fetchApi/requst' // 注册拦截器一次，全局 fetch 生效
+
 import "./theme/light.css";
 import "./theme/dark.css";
 import "./theme/index.css";

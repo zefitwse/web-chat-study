@@ -19,7 +19,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <div className="app-container">
+      <div className="self-app-container">
         <header className="app-header">
           <TopBar></TopBar>
         </header>
