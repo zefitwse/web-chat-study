@@ -1,9 +1,22 @@
-.message-card-container{
-    width: 50%;
-    margin: 60px 0;
-    margin-left: 40%;
-    border-radius: 16px;
-    padding: 10px;
-    background-color: var(--color-bg-1);
-    box-sizing: border-box;
+.message-card-container {
+  width: 50%;
+  margin: 60px 0;
+  margin-left: 40%;
+  border-radius: 16px;
+  padding: 10px;
+  background-color: var(--color-bg-1);
+  box-sizing: border-box;
+  position: relative;
+  .clip-edit-area {
+    position: absolute;
+    top: calc(100% - 26px);
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+  }
+  .clip-edit-area.show {
+    opacity: 1;
+    visibility: visible;
+  }
 }

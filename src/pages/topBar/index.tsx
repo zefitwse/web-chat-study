@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../stores/themeSlice.js";
+import { clearMessagesTable } from "../../utils/index.js";
 
 import "./index.less";
 
@@ -13,10 +14,26 @@ const TopBar: React.FC = () => {
     dispatch(changeTheme(!isDark));
   };
 
+  const clearIndexDB = async () => {
+    await clearMessagesTable();
+    window.location.reload();
+  };
+
   return (
     <div className="topbar">
       <header className="header">
-        <h2>My Rag</h2>
+        <div className="title">
+          <h2>My Rag</h2>
+          <Button
+            type="default"
+            shape="round"
+            style={{ margin: 10 }}
+            onClick={clearIndexDB}
+          >
+            清除聊天记录
+          </Button>
+        </div>
+
         <div>
           <Button
             className="theme-button"

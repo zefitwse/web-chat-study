@@ -24,9 +24,9 @@ const App: React.FC = () => {
           <TopBar></TopBar>
         </header>
         <section className="section">
-          <div className="side-container">
+          {/* <div className="side-container">
             <SideBar></SideBar>
-          </div>
+          </div> */}
           <div className="char-container">
             <ChatAreaCom></ChatAreaCom>
           </div>

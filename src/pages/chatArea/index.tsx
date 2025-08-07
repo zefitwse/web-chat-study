@@ -19,6 +19,7 @@ import {
   AnswerContinueInsertDB,
   AnswerInsertFinish,
   getAllMessages,
+  updateDB,
 } from "../../utils";
 import "./index.less";
 import { Outlet } from "react-router-dom";
@@ -38,8 +39,8 @@ const ChatAreaCom = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
 
-  const sending = useRef(false); // 按钮发送loading
-  const waitingAnswer = useRef(false); // 按钮发送loading
+  const [sending, setSending] = useState(false); // 按钮发送loading
+  const [waitingAnswer, setWaitingAnswer] = useState(false); // 按钮发送loading
 
   const controllerRef = useRef<AbortController | any>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -52,14 +53,16 @@ const ChatAreaCom = () => {
   });
 
   const onFinish = async (values: any) => {
-    waitingAnswer.current = true;
-    sending.current = true;
+    setSending(true);
+    setWaitingAnswer(true);
 
     // 获取用户的输入值
-    const value = values.userPrompt;
+    const value = values.userQuestion;
     if (!value) {
       return;
     }
+
+    form.setFieldValue("userQuestion", "");
 
     // 创建终止signal
     controllerRef.current = new AbortController();
@@ -82,14 +85,19 @@ const ChatAreaCom = () => {
       stream: true,
     };
 
+    let tempId = Date.now();
+    let tempText = "";
     try {
-      const res: any = await postChat(userInfo, data); // 调用封装的 fetch 接口
-      waitingAnswer.current = false;
+      const res: any = await postChat(
+        userInfo,
+        data,
+        controllerRef.current.signal
+      ); // 调用封装的 fetch 接口
+
+      setWaitingAnswer(false);
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder("utf-8");
-      let tempId = Date.now();
-      let tempText = "";
       let answerMessageObj = {
         id: tempId,
         role: "assistant",
@@ -122,7 +130,7 @@ const ChatAreaCom = () => {
           break;
         }
 
-        // 解码 chunk 并拼到 buffer 里（stream: true 处理多字节字符）
+        // 解码 allAnswer 并拼到 buffer 里（stream: true 处理多字节字符）
         buffer += decoder.decode(value, { stream: true });
 
         // 按换行符分割，除了最后一行都可以处理
@@ -165,15 +173,27 @@ const ChatAreaCom = () => {
         );
       }
     } catch (err) {
-      console.error("获取答案失败:", err);
+      if (err.name === "AbortError") {
+        // 数据库里最后一条信息要处理一下。
+        let obj = {
+          id: tempId,
+          createdAt: tempId,
+          partialText: null,
+          result: tempText,
+          role: "assistant",
+          sql: "",
+          streaming: false,
+          type: "textual",
+        };
+        await updateDB("messages", obj);
+      }
     } finally {
-      sending.current = false;
-      waitingAnswer.current = false;
+      setSending(false);
     }
   };
 
   const initMessage = async () => {
-    let res = await getAllMessages("message");
+    let res = await getAllMessages("messages");
     dispatch(initMessageArr(res));
   };
 
@@ -222,7 +242,7 @@ const ChatAreaCom = () => {
       <div ref={containerRef} className="output-area">
         <div className="answer-container">
           <QAChatCom messageArr={messageArr}></QAChatCom>
-          {waitingAnswer.current && (
+          {waitingAnswer && (
             <div>
               <div className="tempAnswerArea">
                 <span className="dot">.</span>
@@ -254,13 +274,13 @@ const ChatAreaCom = () => {
           form={form}
           onFinish={onFinish}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && !isComposing) {
+            if (e.key === "Enter" && !e.shiftKey && !isComposing) {
               e.preventDefault(); // 阻止换行
               form.submit(); // 提交表单
             }
           }}
         >
-          <Form.Item style={{ marginBottom: 0 }} label="" name="userPrompt">
+          <Form.Item style={{ marginBottom: 0 }} label="" name="userQuestion">
             <TextArea
               onCompositionStart={() => setIsComposing(true)}
               onCompositionEnd={() => setIsComposing(false)}
@@ -271,7 +291,7 @@ const ChatAreaCom = () => {
             />
           </Form.Item>
           <div className="self-button">
-            {sending.current ? (
+            {sending ? (
               <Button
                 className="button"
                 shape="circle"

@@ -28,23 +28,23 @@ export const QAInsertDB = async (
   }
 };
 
-// 追加回复
+// 模型回答入库
 export const AnswerContinueInsertDB = async (
   answerMessageObj: object,
   prevText: string,
-  chunkText?: string
+  newText?: string
 ) => {
   try {
     await db.put("messages", {
       ...answerMessageObj,
-      partialText: prevText + chunkText,
+      partialText: prevText + newText,
     });
   } catch (error) {
     console.log(error, "答案追加时候，入库错误");
   }
 };
 
-// 回复结束
+// 模型回复结束
 export const AnswerInsertFinish = async (pre: object, tempText: string) => {
   try {
     await db.put("messages", {
@@ -61,7 +61,7 @@ export const AnswerInsertFinish = async (pre: object, tempText: string) => {
 // 获取table的所有信息
 export const getAllMessages = async (tableName: string) => {
   try {
-    let res = await db.getAll("messages");
+    let res = await db.getAll(tableName);
     return res;
   } catch (error) {
     console.log(error, "出库错误");
@@ -69,6 +69,42 @@ export const getAllMessages = async (tableName: string) => {
   }
 };
 
+// 更新某个table的数据
+export const updateDB = async (tableName: string, dataObj: any) => {
+  try {
+    await db.put(tableName, dataObj);
+  } catch (error) {
+    console.log(error, "更新错误");
+  }
+};
+
+// 查找最后一条消息的id
+
+export const getLastMessage = async (messages:any) => {
+  const tx = db.transaction(messages, "readonly");
+  const store = tx.objectStore(messages);
+
+  // 从主键倒序打开 cursor，第一条就是最后一条记录
+  const cursor = await store.openCursor(null, "prev");
+
+  await tx.done;
+
+  if (cursor) {
+    return cursor;
+  } else {
+    return undefined; // 没有任何记录
+  }
+};
+
+// 清楚当前聊天记录？
+export const clearMessagesTable = async () => {
+  try {
+    await db.clear("messages");
+    console.log("messages 表已清空");
+  } catch (error) {
+    console.error("清空 messages 表失败", error);
+  }
+};
 
 // 生成 randomCode
 export const makeRandomCode = () => {

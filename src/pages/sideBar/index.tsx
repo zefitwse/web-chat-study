@@ -19,18 +19,6 @@ const items: MenuItem[] = [
   {
     type: "divider",
   },
-  {
-    key: "326786786782",
-    label: "查询今天提前",
-  },
-  {
-    key: "26786786782",
-    label: "查询今天提前",
-  },
-  {
-    key: "276867867867862",
-    label: "查询今天提前",
-  },
 ];
 
 const SideBar = () => {
@@ -42,16 +30,16 @@ const SideBar = () => {
     const res = [
       {
         key: "sub1",
-        label: "Navigation One",
+        label: "专线运营能力出错",
       },
       {
         key: "sub2",
-        label: "Navigation Two",
+        label: "帮我查询一下丢包率",
       },
 
       {
         key: "sub4",
-        label: "Navigation Three",
+        label: "为什么这个延迟那么高",
       },
     ];
     setMemuList([...menuList, ...res]);
